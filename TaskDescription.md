@@ -23,17 +23,6 @@
 9. Optionaly: use APIs for preparing the pre-conditions. Note, that this application use GraphQL queries, but you can send them using HTTP methods same as for REST.
 10. . Add the README.md "How to run the tests" & "How to generate report" sections.
 
-The functionality that should be automated:
-
-**Not logged in user:**
-
-- _Positive and negative auth - register & sign-in._
-- _Forgot login info?_
-
-**Logged in user:**
-
-- _Account Overview_
-
 ## Task Reporting:
 
 1. Add and commit all your updates.
