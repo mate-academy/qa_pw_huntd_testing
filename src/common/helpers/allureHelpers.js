@@ -1,0 +1,23 @@
+import { camelCaseToPhrase, capitalize } from './stringHelpers';
+
+export function parseTestTreeHierarchy(fileName, logger) {
+  const testFolder = 'tests/';
+
+  const pathAfterTests = fileName.includes(testFolder)
+    ? fileName.split(testFolder)[1]
+    : fileName;
+
+  const attributesCamelCase = pathAfterTests.split('/');
+
+  let attributes = attributesCamelCase.map(attribute =>
+    capitalize(camelCaseToPhrase(attribute)),
+  );
+
+  if (attributes[2]?.includes('.spec.js')) {
+    attributes = attributes.slice(0, 2);
+  }
+
+  logger.debug(`Parsed test hierarchy: ${JSON.stringify(attributes)}`);
+
+  return attributes;
+}
