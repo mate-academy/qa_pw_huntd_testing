@@ -38,3 +38,24 @@ npm install -g allure-commandline
 ## How to generate report
 
 // TODO
+# Huntd Playwright Test Suite
+
+This repository contains automated UI and API tests for the Huntd application using Playwright, following OOP, Builder, Facade, and Composite patterns. It includes Allure reporting and can run locally, in Docker, or via GitHub Actions CI.
+
+---
+
+## Prerequisites
+
+- Node.js 18+
+- Docker (optional, for running tests in container)
+- Allure CLI (optional, used for report generation; installed in Docker or CI)
+
+---
+
+## Installation
+
+```bash
+git clone <repo-url>
+cd <repo-folder>
+npm ci
+npx playwright install
