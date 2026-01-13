@@ -1,0 +1,42 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main, task_solution]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build Docker image
+        run: docker build -t huntd-tests .
+
+      - name: Run tests in container
+        run: |
+          docker run --name huntd-container huntd-tests || true
+          docker cp huntd-container:/app/allure-results ./allure-results
+          docker rm huntd-container
+
+      - name: Generate Allure report
+        run: |
+          npm install -g allure-commandline
+          allure generate allure-results -o allure-report --clean
+
+      - name: Publish Allure report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
