@@ -6,15 +6,25 @@ import { routes } from '@src/core/config/routes';
 export class CandidatesPage extends BasePage {
   readonly filters: CandidatesFiltersComponent;
   readonly signUpWall: Locator;
+  readonly signUpWallContainer: Locator;
   readonly signInLink: Locator;
   readonly signUpLink: Locator;
 
   constructor(page: Page) {
     super(page);
+
     this.filters = new CandidatesFiltersComponent(page);
-    this.signUpWall = page.getByRole('heading', { name: /Oops! Seems you haven’t signed up/i });
-    this.signInLink = page.getByRole('link', { name: /^Sign In$/i }).last();
-    this.signUpLink = page.getByRole('link', { name: /Free sign up/i }).first();
+
+    this.signUpWall = page.getByRole('heading', {
+      name: /Oops! Seems you haven’t signed up/i,
+    });
+
+    this.signUpWallContainer = page.locator('section, div').filter({
+      has: this.signUpWall,
+    });
+
+    this.signInLink = this.signUpWallContainer.getByRole('link', { name: /^Sign In$/i });
+    this.signUpLink = this.signUpWallContainer.getByRole('link', { name: /Free sign up/i });
   }
 
   async open() {
@@ -22,6 +32,7 @@ export class CandidatesPage extends BasePage {
   }
 
   async expectLoaded() {
+    await expect(this.page).toHaveURL(/\/candidates/i);
     await expect(this.getByRoleHeading(/^Candidates$/i, 1)).toBeVisible();
   }
 

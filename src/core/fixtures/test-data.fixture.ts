@@ -4,12 +4,16 @@ import {
   RecruiterProfile,
   RecruiterProfileBuilder,
 } from '@src/core/builders/recruiter-profile.builder';
+import {
+  RecruiterContactsBuilder,
+  RecruiterContactsData,
+} from '@src/core/builders/recruiter-contacts.builder';
 import { AuthCredentials } from '@src/components/auth-form.component';
 
 type TestDataFixtures = {
-  user: AuthCredentials;
   account: AuthCredentials;
   recruiterProfile: RecruiterProfile;
+  recruiterContactsData: RecruiterContactsData;
 };
 
 export const test = base.extend<TestDataFixtures>({
@@ -17,12 +21,12 @@ export const test = base.extend<TestDataFixtures>({
     await use(new AccountBuilder().build());
   },
 
-  user: async ({ account }, use) => {
-    await use(account);
-  },
-
   recruiterProfile: async ({}, use) => {
     await use(new RecruiterProfileBuilder().build());
+  },
+
+  recruiterContactsData: async ({}, use) => {
+    await use(new RecruiterContactsBuilder().build());
   },
 });
 

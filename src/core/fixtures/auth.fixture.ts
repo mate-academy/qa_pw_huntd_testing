@@ -8,22 +8,26 @@ type AuthFixtures = {
   loginAs: (email?: string, password?: string) => Promise<void>;
 };
 
+async function loginAndWait(page: Page, email: string, password: string) {
+  const auth = new AuthFacade(page);
+
+  await auth.login({
+    email,
+    password,
+  });
+
+  await page.waitForURL((url) => !url.pathname.includes(routes.signIn), {
+    timeout: 15000,
+  });
+
+  await expect(page).not.toHaveURL(/sign-in/i);
+}
+
 export const test = base.extend<AuthFixtures>({
   loggedInPage: async ({ page }, use) => {
     base.skip(!env.authEmail || !env.authPassword, 'AUTH_EMAIL and AUTH_PASSWORD are not configured.');
 
-    const auth = new AuthFacade(page);
-
-    await auth.login({
-      email: env.authEmail!,
-      password: env.authPassword!,
-    });
-
-    await page.waitForURL((url) => !url.pathname.includes(routes.signIn), {
-      timeout: 15000,
-    });
-
-    await expect(page).not.toHaveURL(/sign-in/i);
+    await loginAndWait(page, env.authEmail!, env.authPassword!);
 
     await use(page);
   },
@@ -34,15 +38,7 @@ export const test = base.extend<AuthFixtures>({
         throw new Error('AUTH_EMAIL and AUTH_PASSWORD must be configured.');
       }
 
-      const auth = new AuthFacade(page);
-
-      await auth.login({ email, password });
-
-      await page.waitForURL((url) => !url.pathname.includes(routes.signIn), {
-        timeout: 15000,
-      });
-
-      await expect(page).not.toHaveURL(/sign-in/i);
+      await loginAndWait(page, email, password);
     });
   },
 });

@@ -16,16 +16,16 @@ test.describe('parentSuite: Authentication', () => {
         await expect(signInPage.forgotPasswordLink).toBeVisible();
       });
 
-      test('should render sign up form with repeat password field', async ({ page, user }) => {
+      test('should render sign up form with repeat password field', async ({ page, account }) => {
         const signUpPage = new SignUpPage(page);
 
         await signUpPage.open();
         await signUpPage.expectLoaded();
-        await signUpPage.form.fill(user);
+        await signUpPage.form.fill(account);
 
-        await expect(signUpPage.form.emailInput).toHaveValue(user.email);
-        await expect(signUpPage.form.passwordInput).toHaveValue(user.password);
-        await expect(signUpPage.form.repeatPasswordInput).toHaveValue(user.repeatPassword!);
+        await expect(signUpPage.form.emailInput).toHaveValue(account.email);
+        await expect(signUpPage.form.passwordInput).toHaveValue(account.password);
+        await expect(signUpPage.form.repeatPasswordInput).toHaveValue(account.repeatPassword!);
       });
     });
   });

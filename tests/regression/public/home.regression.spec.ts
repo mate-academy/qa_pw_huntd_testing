@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@src/core/fixtures';
 import { HomePage } from '@src/pages/home.page';
 
 test.describe('parentSuite: Public Area', () => {

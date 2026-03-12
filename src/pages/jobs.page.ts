@@ -16,6 +16,7 @@ export class JobsPage extends BasePage {
   }
 
   async expectLoaded() {
+    await expect(this.page).toHaveURL(/\/jobs/i);
     await expect(this.getByRoleHeading(/^Jobs$/i, 1)).toBeVisible();
     await this.categories.expectMainCategoriesVisible();
   }

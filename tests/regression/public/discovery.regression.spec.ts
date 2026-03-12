@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@src/core/fixtures';
 import { CandidatesPage } from '@src/pages/candidates.page';
 import { JobsPage } from '@src/pages/jobs.page';
 

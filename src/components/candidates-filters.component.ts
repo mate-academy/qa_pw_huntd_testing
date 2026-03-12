@@ -9,13 +9,13 @@ export class CandidatesFiltersComponent extends BaseComponent {
   readonly locationField: Locator;
 
   constructor(page: Page) {
-    super(page, page.locator('body'));
+    super(page, page.locator('[data-testid="candidates-filters"]'));
 
-    this.roleField = page.locator('label:visible').filter({ hasText: /^Role$/ }).first();
-    this.technologiesField = page.locator('label:visible').filter({ hasText: /^Technologies$/ }).first();
-    this.salaryField = page.locator('label:visible').filter({ hasText: /Desired base salary/i }).first();
-    this.englishField = page.locator('label:visible').filter({ hasText: /English level/i }).first();
-    this.locationField = page.locator('label:visible').filter({ hasText: /Candidate's location/i }).first();
+    this.roleField = this.root.getByLabel('Role', { exact: true });
+    this.technologiesField = this.root.getByLabel('Technologies', { exact: true });
+    this.salaryField = this.root.getByLabel(/Desired base salary/i);
+    this.englishField = this.root.getByLabel(/English level/i);
+    this.locationField = this.root.getByLabel(/Candidate's location/i);
   }
 
   async expectAllVisible() {

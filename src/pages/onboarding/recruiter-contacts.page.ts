@@ -1,12 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { BasePage } from '@src/core/base/base.page';
-
-export type RecruiterContactsData = {
-  firstName: string;
-  lastName: string;
-  linkedinUrl?: string;
-  ethWalletAddress?: string;
-};
+import { RecruiterContactsData } from '@src/core/builders/recruiter-contacts.builder';
 
 export class RecruiterContactsPage extends BasePage {
   readonly walletInput: Locator;

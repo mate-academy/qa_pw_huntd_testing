@@ -10,9 +10,10 @@ export class SignInPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
+
     this.form = new AuthFormComponent(page, /^Sign In$/);
     this.forgotPasswordLink = page.getByRole('link', { name: /Forgot password/i });
-    this.signUpLink = page.locator('a[href="/sign-up"]').last();
+    this.signUpLink = page.getByRole('banner').getByRole('link', { name: /^Sign up$/i });
   }
 
   async open() {

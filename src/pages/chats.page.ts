@@ -1,9 +1,9 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { BasePage } from '@src/core/base/base.page';
+import { routes } from '@src/core/config/routes';
 
 export class ChatsPage extends BasePage {
   readonly chatsLink: Locator;
-  readonly chatList: Locator;
   readonly chatItems: Locator;
   readonly activeChatItem: Locator;
   readonly messageInput: Locator;
@@ -13,27 +13,22 @@ export class ChatsPage extends BasePage {
   constructor(page: Page) {
     super(page);
 
-    this.chatsLink = page.getByRole('link', { name: /Chats/i });
-    this.chatList = page.locator('[class*="ChatSelector_chatSelector__"]');
-    this.chatItems = page.locator('a[class*="ChatSelectorItem_chatSelectorItem__"]');
-    this.activeChatItem = page.locator(
-      'a[class*="ChatSelectorItem_chatSelectorItem__"][class*="is-active"]'
-    );
+    this.chatsLink = page.getByRole('link', { name: /^Chats$/i });
+    this.chatItems = page.locator('a[href^="/chats/"]');
+    this.activeChatItem = page.locator('a[href^="/chats/"].is-active');
     this.chatContainer = page.locator('[class*="ChatBox_chatBox__"]');
     this.messageInput = page.getByPlaceholder(/Type a message/i);
-    this.loader = page.locator('.Loader_loaderPlaceholder__SRH3Y');
+    this.loader = page.locator('[class*="Loader_loaderPlaceholder__"]');
   }
 
   async open() {
-    await super.open('/chats');
+    await super.open(routes.chats);
   }
 
   async expectLoaded() {
-    await expect(this.page).toHaveURL(/\/chats/);
-    await this.loader.waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+    await expect(this.page).toHaveURL(/\/chats(\/.*)?$/);
     await expect(this.chatsLink).toBeVisible();
-    await expect(this.chatList.first()).toBeVisible();
-    await expect(this.chatItems.first()).toBeVisible();
+    await expect(this.chatItems.first()).toBeVisible({ timeout: 15000 });
   }
 
   async openFirstChat() {

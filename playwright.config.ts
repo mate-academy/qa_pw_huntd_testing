@@ -18,9 +18,10 @@ export default defineConfig({
     timeout: 10_000,
   },
   reporter: [
-    ['html', { open: 'never' }],
-    ['list'],
-  ],
+  ['html', { open: 'never' }],
+  ['list'],
+  ['allure-playwright']
+],
   use: {
     baseURL,
     trace: 'retain-on-failure',

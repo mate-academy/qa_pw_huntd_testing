@@ -2,23 +2,24 @@ import { expect, Locator, Page } from '@playwright/test';
 import { BaseComponent } from '@src/core/base/base.component';
 
 export class JobsCategoriesComponent extends BaseComponent {
-  readonly backendLink: Locator;
-  readonly frontendLink: Locator;
-  readonly reactLink: Locator;
-  readonly solidityLink: Locator;
+  readonly backendCategory: Locator;
+  readonly frontendCategory: Locator;
+  readonly reactCategory: Locator;
+  readonly solidityCategory: Locator;
 
   constructor(page: Page) {
-    super(page, page.locator('body'));
-    this.backendLink = page.getByRole('link', { name: /^Backend$/ });
-    this.frontendLink = page.getByRole('link', { name: /^Frontend$/ });
-    this.reactLink = page.getByRole('link', { name: /^React$/ });
-    this.solidityLink = page.getByRole('link', { name: /^Solidity$/ });
+    super(page, page.locator('div[class*="VacanciesNav_container__"]'));
+
+    this.backendCategory = this.root.getByText('Backend', { exact: true });
+    this.frontendCategory = this.root.getByText('Frontend', { exact: true });
+    this.reactCategory = this.root.getByText('React', { exact: true });
+    this.solidityCategory = this.root.getByText('Solidity', { exact: true });
   }
 
   async expectMainCategoriesVisible() {
-    await expect(this.backendLink).toBeVisible();
-    await expect(this.frontendLink).toBeVisible();
-    await expect(this.reactLink).toBeVisible();
-    await expect(this.solidityLink).toBeVisible();
+    await expect(this.backendCategory).toBeVisible();
+    await expect(this.frontendCategory).toBeVisible();
+    await expect(this.reactCategory).toBeVisible();
+    await expect(this.solidityCategory).toBeVisible();
   }
 }

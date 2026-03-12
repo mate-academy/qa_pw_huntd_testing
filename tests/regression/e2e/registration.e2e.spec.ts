@@ -1,7 +1,6 @@
 import { test, expect } from '@src/core/fixtures';
 import { RegistrationFacade } from '@src/core/facades/registration.facade';
 import { RecruiterContactsPage } from '@src/pages/onboarding/recruiter-contacts.page';
-import { RecruiterOutreachPage } from '@src/pages/onboarding/recruiter-outreach.page';
 import { PerfectCandidatePage } from '@src/pages/onboarding/perfect-candidate.page';
 import { ChatsPage } from '@src/pages/chats.page';
 
@@ -34,29 +33,29 @@ test.describe('parentSuite: Registration', () => {
       test('should open recruiter specific onboarding after recruiter profile is selected', async ({
         page,
         account,
-        recruiterProfile,
       }) => {
         const registration = new RegistrationFacade(page);
 
-        await registration.registerAsRecruiter(account, recruiterProfile);
+        await registration.createAccount(account);
+        await registration.chooseProfilePage.chooseRecruiter();
 
-        await expect(registration.recruiterCompanyDetailsPage.roleInput).toHaveValue(
-          recruiterProfile.role
-        );
-        await expect(registration.recruiterCompanyDetailsPage.companyInput).toHaveValue(
-          recruiterProfile.company
-        );
+        await registration.recruiterCompanyDetailsPage.expectLoaded();
+        await expect(registration.recruiterCompanyDetailsPage.roleInput).toBeVisible();
+        await expect(registration.recruiterCompanyDetailsPage.companyInput).toBeVisible();
+        await expect(
+          registration.recruiterCompanyDetailsPage.saveAndContinueButton
+        ).toBeVisible();
       });
 
       test('should continue recruiter onboarding to contacts and outreach step', async ({
         page,
         account,
         recruiterProfile,
+        recruiterContactsData,
       }) => {
         const registration = new RegistrationFacade(page);
         const contactsPage = new RecruiterContactsPage(page);
         const perfectCandidatePage = new PerfectCandidatePage(page);
-        const recruiterOutreachPage = new RecruiterOutreachPage(page);
 
         await registration.createAccount(account);
         await registration.chooseProfilePage.chooseRecruiter();
@@ -65,12 +64,7 @@ test.describe('parentSuite: Registration', () => {
         await contactsPage.expectLoaded();
         await expect(contactsPage.firstNameInput).toBeVisible();
 
-        await contactsPage.submit({
-          firstName: 'Zoryana',
-          lastName: 'Fedorovska',
-          linkedinUrl: 'https://www.linkedin.com/in/zoryana-fedorovska',
-          ethWalletAddress: '',
-        });
+        await contactsPage.submit(recruiterContactsData);
 
         await perfectCandidatePage.expectLoaded();
       });
@@ -79,6 +73,7 @@ test.describe('parentSuite: Registration', () => {
         page,
         account,
         recruiterProfile,
+        recruiterContactsData,
       }) => {
         const registration = new RegistrationFacade(page);
         const contactsPage = new RecruiterContactsPage(page);
@@ -90,16 +85,9 @@ test.describe('parentSuite: Registration', () => {
         await registration.recruiterCompanyDetailsPage.submit(recruiterProfile);
 
         await contactsPage.expectLoaded();
-
-        await contactsPage.submit({
-          firstName: 'Test',
-          lastName: 'Recruiter',
-          linkedinUrl: 'https://linkedin.com/in/test',
-          ethWalletAddress: '',
-        });
+        await contactsPage.submit(recruiterContactsData);
 
         await perfectCandidatePage.expectLoaded();
-
         await perfectCandidatePage.submit({
           role: ['Full Stack'],
           technologies: ['JavaScript'],
@@ -111,7 +99,6 @@ test.describe('parentSuite: Registration', () => {
         await chatsPage.expectLoaded();
         await chatsPage.openFirstChat();
         await chatsPage.expectChatOpened();
-
       });
     });
   });

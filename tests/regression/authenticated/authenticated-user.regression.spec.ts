@@ -6,6 +6,7 @@ import { JobsPage } from '@src/pages/jobs.page';
 test.describe('parentSuite: Authenticated Area', () => {
   test.describe('suite: Signed In User', () => {
     test.describe('subSuite: Regression', () => {
+
       test('should open chats page for authenticated recruiter', async ({ loggedInPage }) => {
         const chatsPage = new ChatsPage(loggedInPage);
 
@@ -20,7 +21,6 @@ test.describe('parentSuite: Authenticated Area', () => {
 
         await jobsPage.open();
         await jobsPage.expectLoaded();
-        await expect(loggedInPage).toHaveURL(/\/jobs/i);
       });
 
       test('should open candidates page for authenticated recruiter', async ({ loggedInPage }) => {
@@ -28,8 +28,8 @@ test.describe('parentSuite: Authenticated Area', () => {
 
         await candidatesPage.open();
         await candidatesPage.expectLoaded();
-        await expect(loggedInPage).toHaveURL(/\/candidates/i);
       });
+
     });
   });
 });

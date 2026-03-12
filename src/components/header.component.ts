@@ -8,11 +8,13 @@ export class HeaderComponent extends BaseComponent {
   readonly signUpLink: Locator;
 
   constructor(page: Page) {
-    super(page, page.locator('header, body'));
-    this.candidatesLink = page.getByRole('link', { name: /^Candidates$/ });
-    this.jobsLink = page.getByRole('link', { name: /^Jobs$/ });
-    this.signInLink = page.getByRole('link', { name: /^Sign In$/ });
-    this.signUpLink = page.getByRole('link', { name: /Sign up|Free sign up/i });
+    const header = page.locator('header');
+    super(page, header);
+
+    this.candidatesLink = this.root.getByRole('link', { name: /^Candidates$/ });
+    this.jobsLink = this.root.getByRole('link', { name: /^Jobs$/ });
+    this.signInLink = this.root.getByRole('link', { name: /^Sign In$/ });
+    this.signUpLink = this.root.getByRole('link', { name: /Sign up|Free sign up/i });
   }
 
   async expectGuestNavigation() {

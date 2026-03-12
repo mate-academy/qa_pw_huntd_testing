@@ -11,40 +11,39 @@ type PerfectCandidateData = {
 };
 
 export class PerfectCandidatePage extends BasePage {
-  readonly roleControl: Locator;
   readonly roleInput: Locator;
+  readonly roleControl: Locator;
 
-  readonly technologiesControl: Locator;
   readonly technologiesInput: Locator;
+  readonly technologiesControl: Locator;
 
-  readonly jobExperienceControl: Locator;
   readonly jobExperienceInput: Locator;
+  readonly jobExperienceControl: Locator;
 
-  readonly englishLevelControl: Locator;
   readonly englishLevelInput: Locator;
+  readonly englishLevelControl: Locator;
 
   readonly countryCityButton: Locator;
   readonly locationInput: Locator;
 
   readonly nextButton: Locator;
-
   readonly messageTextarea: Locator;
   readonly sendButton: Locator;
 
   constructor(page: Page) {
     super(page);
 
-    this.roleControl = page.locator('label[for="specializations"] + div .select__control');
     this.roleInput = page.locator('#specializations');
+    this.roleControl = this.getSelectControlByInputId('specializations');
 
-    this.technologiesControl = page.locator('label[for="technologies"] + div .select__control');
     this.technologiesInput = page.locator('#technologies');
+    this.technologiesControl = this.getSelectControlByInputId('technologies');
 
-    this.jobExperienceControl = page.locator('label[for="job-experiences"] + div .select__control');
     this.jobExperienceInput = page.locator('#job-experiences');
+    this.jobExperienceControl = this.getSelectControlByInputId('job-experiences');
 
-    this.englishLevelControl = page.locator('label[for="english-levels"] + div .select__control');
     this.englishLevelInput = page.locator('#english-levels');
+    this.englishLevelControl = this.getSelectControlByInputId('english-levels');
 
     this.countryCityButton = page.getByRole('button', { name: /country\/city/i });
     this.locationInput = page.locator('#locations');
@@ -71,7 +70,7 @@ export class PerfectCandidatePage extends BasePage {
 
   async fillForm(data: PerfectCandidateData) {
     if (data.role?.length) {
-      await this.selectRoleValues(data.role);
+      await this.selectMultiValues(this.roleControl, this.roleInput, data.role);
     }
 
     if (data.technologies?.length) {
@@ -87,7 +86,11 @@ export class PerfectCandidatePage extends BasePage {
     }
 
     if (data.englishLevel) {
-      await this.selectEnglishLevel(data.englishLevel);
+      await this.selectSingleValue(
+        this.englishLevelControl,
+        this.englishLevelInput,
+        data.englishLevel
+      );
     }
 
     if (data.location) {
@@ -114,77 +117,50 @@ export class PerfectCandidatePage extends BasePage {
     }
   }
 
-  private async selectRoleValues(values: string[]) {
+  private getSelectControlByInputId(inputId: string): Locator {
+    return this.page.locator(`label[for="${inputId}"] + div .select__control`).first();
+  }
+
+  private async selectMultiValues(control: Locator, input: Locator, values: string[]) {
     for (const value of values) {
-      await this.roleControl.click();
-      await this.roleInput.fill('');
-      await this.roleInput.pressSequentially(value, { delay: 50 });
+      await this.openSelect(control);
+      await this.searchSelectValue(input, value);
 
-      await this.page.waitForTimeout(300);
-      await this.roleInput.press('Enter');
+      const option = this.getOptionByText(value);
+      await expect(option).toBeVisible({ timeout: 5000 });
+      await option.click();
 
-      await expect(
-        this.roleControl
-          .locator('.select__multi-value__label')
-          .filter({ hasText: new RegExp(this.escapeRegExp(value), 'i') })
-          .first()
-      ).toBeVisible({ timeout: 5000 });
+      await expect(this.getSelectedMultiValue(control, value)).toBeVisible({ timeout: 5000 });
     }
 
-    await this.page.mouse.click(20, 20);
+    await this.closeSelect();
   }
 
   private async selectTechnologyValues(values: string[]) {
     for (const value of values) {
-      await this.technologiesControl.click();
+      await this.openSelect(this.technologiesControl);
 
-      const option = this.page
-        .locator('.select__option')
-        .filter({ hasText: new RegExp(`^${this.escapeRegExp(value)}$`, 'i') })
-        .first();
-
+      const option = this.getOptionByText(value);
       await expect(option).toBeVisible({ timeout: 5000 });
       await option.click();
 
       await expect(
-        this.technologiesControl
-          .locator('.select__multi-value__label')
-          .filter({ hasText: new RegExp(this.escapeRegExp(value), 'i') })
-          .first()
+        this.getSelectedMultiValue(this.technologiesControl, value)
       ).toBeVisible({ timeout: 5000 });
     }
 
-    await this.page.mouse.click(20, 20);
+    await this.closeSelect();
   }
 
   private async selectSingleValue(control: Locator, input: Locator, value: string) {
-    await control.click();
-    await input.fill('');
-    await input.pressSequentially(value, { delay: 50 });
+    await this.openSelect(control);
+    await this.searchSelectValue(input, value);
 
-    const option = this.page
-      .locator('.select__option, [role="option"]')
-      .filter({ hasText: new RegExp(this.escapeRegExp(value), 'i') })
-      .first();
-
+    const option = this.getOptionByText(value);
     await expect(option).toBeVisible({ timeout: 8000 });
     await option.click();
 
     await expect(control).toContainText(value, {
-      ignoreCase: true,
-      timeout: 5000,
-    });
-  }
-
-  private async selectEnglishLevel(value: string) {
-    await this.englishLevelControl.click();
-    await this.englishLevelInput.fill('');
-    await this.englishLevelInput.pressSequentially(value, { delay: 50 });
-
-    await this.page.waitForTimeout(300);
-    await this.englishLevelInput.press('Enter');
-
-    await expect(this.englishLevelControl).toContainText(value, {
       ignoreCase: true,
       timeout: 5000,
     });
@@ -199,6 +175,33 @@ export class PerfectCandidatePage extends BasePage {
     const option = this.page.locator('.pac-item, [role="option"]').first();
     await expect(option).toBeVisible({ timeout: 5000 });
     await option.click();
+  }
+
+  private async openSelect(control: Locator) {
+    await control.click();
+  }
+
+  private async searchSelectValue(input: Locator, value: string) {
+    await input.fill('');
+    await input.pressSequentially(value, { delay: 50 });
+  }
+
+  private async closeSelect() {
+    await this.page.keyboard.press('Escape');
+  }
+
+  private getOptionByText(value: string): Locator {
+    return this.page
+      .locator('.select__option, [role="option"]')
+      .filter({ hasText: new RegExp(`^${this.escapeRegExp(value)}$`, 'i') })
+      .first();
+  }
+
+  private getSelectedMultiValue(control: Locator, value: string): Locator {
+    return control
+      .locator('.select__multi-value__label')
+      .filter({ hasText: new RegExp(`^${this.escapeRegExp(value)}$`, 'i') })
+      .first();
   }
 
   private escapeRegExp(value: string) {
