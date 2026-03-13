@@ -10,16 +10,17 @@ export class FooterComponent extends BaseComponent {
   readonly pricingLink: Locator;
 
   constructor(page: Page) {
-    super(page, page.locator('footer, body'));
-    this.termsLink = page.getByRole('link', { name: /Terms of use/i });
-    this.cookiesLink = page.getByRole('link', { name: /Cookies policy/i });
-    this.privacyLink = page.getByRole('link', { name: /Privacy policy/i });
-    this.aboutLink = page.getByRole('link', { name: /About us/i });
-    this.faqLink = page.getByRole('link', { name: /FAQs/i });
-    this.pricingLink = page.getByRole('link', { name: /Pricing/i });
+    super(page, page.locator('footer'));
+
+    this.termsLink = this.root.getByRole('link', { name: /^Terms of use$/i });
+    this.cookiesLink = this.root.getByRole('link', { name: /^Cookies policy$/i });
+    this.privacyLink = this.root.getByRole('link', { name: /^Privacy policy$/i });
+    this.aboutLink = this.root.getByRole('link', { name: /^About us$/i });
+    this.faqLink = this.root.getByRole('link', { name: /^FAQs$/i });
+    this.pricingLink = this.root.getByRole('link', { name: /^Pricing$/i });
   }
 
-  async expectLegalLinks() {
+  async expectLegalLinks(): Promise<void> {
     await expect(this.termsLink).toBeVisible();
     await expect(this.cookiesLink).toBeVisible();
     await expect(this.privacyLink).toBeVisible();

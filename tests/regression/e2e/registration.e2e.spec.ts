@@ -30,75 +30,71 @@ test.describe('parentSuite: Registration', () => {
         await expect(page).toHaveURL(/\/profile\/candidate/i);
       });
 
-      test('should open recruiter specific onboarding after recruiter profile is selected', async ({
-        page,
-        account,
-      }) => {
-        const registration = new RegistrationFacade(page);
+      test.describe('recruiter flow', () => {
+        let registration: RegistrationFacade;
 
-        await registration.createAccount(account);
-        await registration.chooseProfilePage.chooseRecruiter();
+        test.beforeEach(async ({ page, account }) => {
+          registration = new RegistrationFacade(page);
 
-        await registration.recruiterCompanyDetailsPage.expectLoaded();
-        await expect(registration.recruiterCompanyDetailsPage.roleInput).toBeVisible();
-        await expect(registration.recruiterCompanyDetailsPage.companyInput).toBeVisible();
-        await expect(
-          registration.recruiterCompanyDetailsPage.saveAndContinueButton
-        ).toBeVisible();
-      });
-
-      test('should continue recruiter onboarding to contacts and outreach step', async ({
-        page,
-        account,
-        recruiterProfile,
-        recruiterContactsData,
-      }) => {
-        const registration = new RegistrationFacade(page);
-        const contactsPage = new RecruiterContactsPage(page);
-        const perfectCandidatePage = new PerfectCandidatePage(page);
-
-        await registration.createAccount(account);
-        await registration.chooseProfilePage.chooseRecruiter();
-        await registration.recruiterCompanyDetailsPage.submit(recruiterProfile);
-
-        await contactsPage.expectLoaded();
-        await expect(contactsPage.firstNameInput).toBeVisible();
-
-        await contactsPage.submit(recruiterContactsData);
-
-        await perfectCandidatePage.expectLoaded();
-      });
-
-      test('should open recruiter chats UI after onboarding', async ({
-        page,
-        account,
-        recruiterProfile,
-        recruiterContactsData,
-      }) => {
-        const registration = new RegistrationFacade(page);
-        const contactsPage = new RecruiterContactsPage(page);
-        const perfectCandidatePage = new PerfectCandidatePage(page);
-        const chatsPage = new ChatsPage(page);
-
-        await registration.createAccount(account);
-        await registration.chooseProfilePage.chooseRecruiter();
-        await registration.recruiterCompanyDetailsPage.submit(recruiterProfile);
-
-        await contactsPage.expectLoaded();
-        await contactsPage.submit(recruiterContactsData);
-
-        await perfectCandidatePage.expectLoaded();
-        await perfectCandidatePage.submit({
-          role: ['Full Stack'],
-          technologies: ['JavaScript'],
-          jobExperience: '3+ years',
-          message:
-            'Hey! We are an early-stage startup building a new product and looking for a Full Stack engineer with JavaScript experience.',
+          await registration.createAccount(account);
+          await registration.chooseProfilePage.chooseRecruiter();
         });
 
-        await chatsPage.expectLoaded();
-        await chatsPage.openFirstChat();
-        await chatsPage.expectChatOpened();
+        test('should open recruiter specific onboarding after recruiter profile is selected', async () => {
+          await registration.recruiterCompanyDetailsPage.expectLoaded();
+          await expect(registration.recruiterCompanyDetailsPage.roleInput).toBeVisible();
+          await expect(registration.recruiterCompanyDetailsPage.companyInput).toBeVisible();
+          await expect(
+            registration.recruiterCompanyDetailsPage.saveAndContinueButton
+          ).toBeVisible();
+        });
+
+        test.describe('company details submitted', () => {
+          let contactsPage: RecruiterContactsPage;
+          let perfectCandidatePage: PerfectCandidatePage;
+          let chatsPage: ChatsPage;
+
+          test.beforeEach(async ({ page, recruiterProfile }) => {
+            contactsPage = new RecruiterContactsPage(page);
+            perfectCandidatePage = new PerfectCandidatePage(page);
+            chatsPage = new ChatsPage(page);
+
+            await registration.recruiterCompanyDetailsPage.submit(recruiterProfile);
+          });
+
+          test('should continue recruiter onboarding to contacts and outreach step', async ({
+            recruiterContactsData,
+          }) => {
+            await contactsPage.expectLoaded();
+            await expect(contactsPage.firstNameInput).toBeVisible();
+
+            await contactsPage.submit(recruiterContactsData);
+
+            await perfectCandidatePage.expectLoaded();
+          });
+
+          test.describe('contacts submitted', () => {
+            test.beforeEach(async ({ recruiterContactsData }) => {
+              await contactsPage.expectLoaded();
+              await contactsPage.submit(recruiterContactsData);
+              await perfectCandidatePage.expectLoaded();
+            });
+
+            test('should open recruiter chats UI after onboarding', async () => {
+              await perfectCandidatePage.submit({
+                role: ['Full Stack'],
+                technologies: ['JavaScript'],
+                jobExperience: '3+ years',
+                message:
+                  'Hey! We are an early-stage startup building a new product and looking for a Full Stack engineer with JavaScript experience.',
+              });
+
+              await chatsPage.expectLoaded();
+              await chatsPage.openFirstChat();
+              await chatsPage.expectChatOpened();
+            });
+          });
+        });
       });
     });
   });

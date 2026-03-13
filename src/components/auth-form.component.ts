@@ -20,14 +20,14 @@ export class AuthFormComponent extends BaseComponent {
     this.emailInput = form.getByLabel(/^Email$/);
     this.passwordInput = form.getByLabel(/^Password$/);
     this.repeatPasswordInput = form.getByLabel(/Repeat password/i);
-    this.submitButton = page.getByRole('button', { name: submitLabel });
+    this.submitButton = form.getByRole('button', { name: submitLabel });
   }
 
   async fill(data: AuthCredentials) {
     await this.emailInput.fill(data.email);
     await this.passwordInput.fill(data.password);
 
-    if (data.repeatPassword !== undefined && (await this.repeatPasswordInput.count())) {
+    if (data.repeatPassword !== undefined && await this.repeatPasswordInput.count()) {
       await this.repeatPasswordInput.fill(data.repeatPassword);
     }
   }

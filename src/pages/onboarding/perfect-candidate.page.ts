@@ -49,7 +49,6 @@ export class PerfectCandidatePage extends BasePage {
     this.locationInput = page.locator('#locations');
 
     this.nextButton = page.getByRole('button', { name: /^Next$/i });
-
     this.messageTextarea = page.locator('#messageBody');
     this.sendButton = page.getByRole('button', { name: /send/i });
   }
@@ -70,11 +69,11 @@ export class PerfectCandidatePage extends BasePage {
 
   async fillForm(data: PerfectCandidateData) {
     if (data.role?.length) {
-      await this.selectMultiValues(this.roleControl, this.roleInput, data.role);
+      await this.selectMultiValues(this.roleControl, data.role, this.roleInput);
     }
 
     if (data.technologies?.length) {
-      await this.selectTechnologyValues(data.technologies);
+      await this.selectMultiValues(this.technologiesControl, data.technologies);
     }
 
     if (data.jobExperience) {
@@ -118,35 +117,28 @@ export class PerfectCandidatePage extends BasePage {
   }
 
   private getSelectControlByInputId(inputId: string): Locator {
-    return this.page.locator(`label[for="${inputId}"] + div .select__control`).first();
+    return this.page
+      .locator(`#${inputId}`)
+      .locator('xpath=ancestor::div[contains(@class,"select__control")][1]');
   }
 
-  private async selectMultiValues(control: Locator, input: Locator, values: string[]) {
+  private async selectMultiValues(
+    control: Locator,
+    values: string[],
+    input?: Locator
+  ) {
     for (const value of values) {
       await this.openSelect(control);
-      await this.searchSelectValue(input, value);
+
+      if (input) {
+        await this.searchSelectValue(input, value);
+      }
 
       const option = this.getOptionByText(value);
       await expect(option).toBeVisible({ timeout: 5000 });
       await option.click();
 
-      await expect(this.getSelectedMultiValue(control, value)).toBeVisible({ timeout: 5000 });
-    }
-
-    await this.closeSelect();
-  }
-
-  private async selectTechnologyValues(values: string[]) {
-    for (const value of values) {
-      await this.openSelect(this.technologiesControl);
-
-      const option = this.getOptionByText(value);
-      await expect(option).toBeVisible({ timeout: 5000 });
-      await option.click();
-
-      await expect(
-        this.getSelectedMultiValue(this.technologiesControl, value)
-      ).toBeVisible({ timeout: 5000 });
+      await this.expectSelectedMultiValue(control, value);
     }
 
     await this.closeSelect();
@@ -172,12 +164,13 @@ export class PerfectCandidatePage extends BasePage {
     await this.locationInput.fill('');
     await this.locationInput.pressSequentially(location, { delay: 40 });
 
-    const option = this.page.locator('.pac-item, [role="option"]').first();
+    const option = this.getLocationOption();
     await expect(option).toBeVisible({ timeout: 5000 });
     await option.click();
   }
 
   private async openSelect(control: Locator) {
+    await expect(control).toBeVisible();
     await control.click();
   }
 
@@ -192,16 +185,19 @@ export class PerfectCandidatePage extends BasePage {
 
   private getOptionByText(value: string): Locator {
     return this.page
-      .locator('.select__option, [role="option"]')
+      .locator('[role="option"], .select__option')
       .filter({ hasText: new RegExp(`^${this.escapeRegExp(value)}$`, 'i') })
       .first();
   }
 
-  private getSelectedMultiValue(control: Locator, value: string): Locator {
-    return control
-      .locator('.select__multi-value__label')
-      .filter({ hasText: new RegExp(`^${this.escapeRegExp(value)}$`, 'i') })
-      .first();
+  private async expectSelectedMultiValue(control: Locator, value: string) {
+    await expect(control).toContainText(new RegExp(this.escapeRegExp(value), 'i'), {
+      timeout: 5000,
+    });
+  }
+
+  private getLocationOption(): Locator {
+    return this.page.locator('[role="option"], .pac-item').first();
   }
 
   private escapeRegExp(value: string) {
