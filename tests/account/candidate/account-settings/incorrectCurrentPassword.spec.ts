@@ -1,0 +1,24 @@
+import { test } from '@fixtures/fixtures';
+import { faker } from '@faker-js/faker';
+import { WRONG_CREDENTIALS } from '@ui/constants/validationMessages';
+
+test.describe(`Update candidate account settings`, () => {
+  test(`User should see validation error when current password is incorrect`, async ({
+    reporter,
+    registerNewCandidate,
+    changePasswordPage,
+  }) => {
+    await reporter.severity('critical');
+
+    const incorrectPassword = faker.internet.password();
+    const newPassword = faker.internet.password();
+
+    await changePasswordPage.open();
+    await changePasswordPage.clickChangePassword();
+    await changePasswordPage.fillCurrentPassword(incorrectPassword);
+    await changePasswordPage.fillNewPassword(newPassword);
+    await changePasswordPage.fillRepeatNewPassword(newPassword);
+    await changePasswordPage.clickSaveChanges();
+    await changePasswordPage.assertCurrentPasswordValidationMessage(WRONG_CREDENTIALS);
+  });
+});

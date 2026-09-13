@@ -1,0 +1,20 @@
+import { test } from '@fixtures/fixtures';
+import { FIRST_NAME_IS_REQUIRED } from '@ui/constants/validationMessages';
+
+test.describe(`Edit profile as candidate`, () => {
+  test.use({ storageState: 'playwright/.auth/candidate.json' });
+
+  test(`User should see validation error when first name is empty`, async ({
+    reporter,
+    editCandidateProfileContactsPage,
+  }) => {
+    await reporter.severity('minor');
+
+    const firstName = '';
+
+    await editCandidateProfileContactsPage.open();
+    await editCandidateProfileContactsPage.profileContacts.fillFirstName(firstName);
+    await editCandidateProfileContactsPage.clickSaveChanges();
+    await editCandidateProfileContactsPage.assertFirstNameValidationMessage(FIRST_NAME_IS_REQUIRED);
+  });
+});

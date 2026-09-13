@@ -1,0 +1,16 @@
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+playwright/.auth
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+.VSCodeCounter/
+allure-results/
+allure-report/
+
+# internal working notes (not part of the project)
+docs/TODO.md
+docs/wins.md

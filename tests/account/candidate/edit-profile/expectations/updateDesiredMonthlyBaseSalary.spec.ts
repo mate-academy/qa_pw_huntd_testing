@@ -1,0 +1,28 @@
+import { test } from '@fixtures/fixtures';
+
+test.describe(`Edit profile as candidate`, () => {
+  test(`User should update desired monthly base salary`, async ({
+    reporter,
+    registerNewCandidate,
+    editCandidateProfileJobExpectationsPage,
+    candidateProfilePreviewPage,
+  }) => {
+    await reporter.severity('minor');
+
+    const salaryType = 'Monthly';
+    const desiredBaseSalary = 2_500;
+
+    await editCandidateProfileJobExpectationsPage.open();
+    await editCandidateProfileJobExpectationsPage.profileJobExpectations.clickSalaryType(
+      salaryType,
+    );
+    await editCandidateProfileJobExpectationsPage.profileJobExpectations.clearDesiredBaseSalary();
+    await editCandidateProfileJobExpectationsPage.profileJobExpectations.fillDesiredBaseSalary(
+      `${desiredBaseSalary}`,
+    );
+    await editCandidateProfileJobExpectationsPage.clickSaveChangesAndWaitForSave();
+
+    await candidateProfilePreviewPage.open();
+    await candidateProfilePreviewPage.assertSalaryHasText(salaryType, desiredBaseSalary);
+  });
+});

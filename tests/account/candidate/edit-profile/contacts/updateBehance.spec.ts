@@ -1,0 +1,22 @@
+import { test } from '@fixtures/fixtures';
+import { createProfileContacts } from '@factories/createProfileContacts';
+
+test.describe(`Edit profile as candidate`, () => {
+  test(`User should update Behance`, async ({
+    reporter,
+    registerNewCandidate,
+    editCandidateProfileContactsPage,
+    candidateProfilePreviewPage,
+  }) => {
+    await reporter.severity('normal');
+
+    const behanceUrl = createProfileContacts().behanceUrl;
+
+    await editCandidateProfileContactsPage.open();
+    await editCandidateProfileContactsPage.profileContacts.fillBehance(behanceUrl);
+    await editCandidateProfileContactsPage.clickSaveChangesAndWaitForSave();
+
+    await candidateProfilePreviewPage.open();
+    await candidateProfilePreviewPage.assertBehanceHasCorrectUrl(behanceUrl);
+  });
+});

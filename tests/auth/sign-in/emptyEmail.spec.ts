@@ -1,0 +1,16 @@
+import { test } from '@fixtures/fixtures';
+import { SignInUserPage } from '@ui/pages/auth/sign-in/SignInUserPage';
+import { EMAIL_IS_REQUIRED } from '@ui/constants/validationMessages';
+
+test.describe(`Login user`, () => {
+  test(`User should see validation error when email is empty`, async ({ reporter, browser }) => {
+    await reporter.severity('critical');
+
+    const page = await browser.newPage();
+
+    const signInUserPage = new SignInUserPage(page);
+    await signInUserPage.open();
+    await signInUserPage.clickSignIn();
+    await signInUserPage.assertEmailValidationMessage(EMAIL_IS_REQUIRED);
+  });
+});

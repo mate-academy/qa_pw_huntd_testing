@@ -1,0 +1,20 @@
+import { test } from '@fixtures/fixtures';
+import { BEHANCE_IS_INCORRECT } from '@ui/constants/validationMessages';
+
+test.describe(`Edit profile as candidate`, () => {
+  test.use({ storageState: 'playwright/.auth/candidate.json' });
+
+  test(`User should see validation error when Behance is invalid`, async ({
+    reporter,
+    editCandidateProfileContactsPage,
+  }) => {
+    await reporter.severity('minor');
+
+    const behanceUrl = 'incorrect Behance format';
+
+    await editCandidateProfileContactsPage.open();
+    await editCandidateProfileContactsPage.profileContacts.fillBehance(behanceUrl);
+    await editCandidateProfileContactsPage.clickSaveChanges();
+    await editCandidateProfileContactsPage.assertBehanceValidationMessage(BEHANCE_IS_INCORRECT);
+  });
+});

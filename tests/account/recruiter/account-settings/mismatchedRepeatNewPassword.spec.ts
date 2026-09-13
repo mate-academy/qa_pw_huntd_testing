@@ -1,0 +1,25 @@
+import { test } from '@fixtures/fixtures';
+import { faker } from '@faker-js/faker';
+import { PASSWORD_IS_MISMATCHED } from '@ui/constants/validationMessages';
+
+test.describe(`Update recruiter account settings`, () => {
+  test(`User should see validation error when repeat new password is mismatched`, async ({
+    reporter,
+    registerNewRecruiter,
+    changePasswordPage,
+  }) => {
+    await reporter.severity('minor');
+
+    const currentPassword = registerNewRecruiter.userCredentials.password;
+    const newPassword = faker.internet.password();
+    const repeatNewPassword = faker.internet.password();
+
+    await changePasswordPage.open();
+    await changePasswordPage.clickChangePassword();
+    await changePasswordPage.fillCurrentPassword(currentPassword);
+    await changePasswordPage.fillNewPassword(newPassword);
+    await changePasswordPage.fillRepeatNewPassword(repeatNewPassword);
+    await changePasswordPage.clickSaveChanges();
+    await changePasswordPage.assertRepeatNewPasswordValidationMessage(PASSWORD_IS_MISMATCHED);
+  });
+});
