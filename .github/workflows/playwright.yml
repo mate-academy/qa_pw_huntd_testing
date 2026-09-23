@@ -47,6 +47,13 @@ jobs:
         with:
           name: allure-results
           path: allure-results
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Install Allure commandline
+        run: npm install -g allure-commandline
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@v1.9
         with:
