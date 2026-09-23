@@ -1,0 +1,17 @@
+{
+  "name": "qa_pw_huntd_testing",
+  "version": "1.0.0",
+  "description": "To see the description of the task assignment [follow the link](https://github.com/mate-academy/qa_pw_huntd_testing/blob/main/TaskDescription.md).",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.2",
+    "allure-js-commons": "^3.12.2",
+    "allure-playwright": "^3.12.2"
+  }
+}
