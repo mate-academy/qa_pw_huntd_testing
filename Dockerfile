@@ -1,8 +1,8 @@
 FROM node:22-slim
 
-WORKDIR /
+WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y openjdk-17-jre \
 
     libnss3 \
 

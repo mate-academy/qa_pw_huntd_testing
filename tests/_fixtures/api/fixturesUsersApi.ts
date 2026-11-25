@@ -2,13 +2,10 @@ import { test as base } from '@playwright/test';
 import { request as apiRequest } from '@playwright/test';
 import { UsersApi } from '../../../src/api/resources/UsersApi';
 import { ApiClientFacade } from '../../../src/api/ApiClientFacade';
-import { generateStorageStateForAuth } from '../../../src/common/helpers/generateStorageStateForAuth';
 
 export const test = base.extend<{
   usersApi: any;
   registeredUser: any;
-  loggedInUserAndPage: any;
-  loggedInUserAndPage2: any;
   registeredUsers: any;
   userRequests: any;
 }>({
@@ -23,25 +20,7 @@ export const test = base.extend<{
 
     await usersApi.assertSuccessResponseCode(response);
 
-    //user['token'] = await usersApi.parseTokenFromBody(response);
-
     await use(user);
-  },
-  loggedInUserAndPage: async ({ registeredUser, browser }, use) => {
-    const storageState = generateStorageStateForAuth(registeredUser);
-
-    const context = await browser.newContext(storageState);
-    const page = await context.newPage();
-
-    await use({ registeredUser, page });
-  },
-  loggedInUserAndPage2: async ({ registeredUser, browser }, use) => {
-    const storageState = generateStorageStateForAuth(registeredUser);
-
-    const context = await browser.newContext(storageState);
-    const page = await context.newPage();
-
-    await use({ registeredUser, page });
   },
   registeredUsers: async ({ usersApi, users, usersNumber }, use) => {
     for (let i = 0; i < usersNumber; i++) {
