@@ -5,12 +5,12 @@ import { ApiClientFacade } from '../../../src/api/ApiClientFacade';
 import { generateStorageStateForAuth } from '../../../src/common/helpers/generateStorageStateForAuth';
 
 export const test = base.extend<{
-  usersApi;
-  registeredUser;
-  loggedInUserAndPage;
-  loggedInUserAndPage2;
-  registeredUsers;
-  userRequests;
+  usersApi: any;
+  registeredUser: any;
+  loggedInUserAndPage: any;
+  loggedInUserAndPage2: any;
+  registeredUsers: any;
+  userRequests: any;
 }>({
   usersApi: async ({ request, logger }, use) => {
     const apiClientFacade = new ApiClientFacade({ request, logger });

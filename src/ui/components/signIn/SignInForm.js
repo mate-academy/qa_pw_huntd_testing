@@ -42,7 +42,7 @@ export class SignInForm extends BaseComponent {
   }
 
   async clickSignInButton() {
-    await this.step(`Click 'Sign up' button in the page header`, async () => {
+    await this.step(`Click 'Sign in' button in the page header`, async () => {
       await this.#signInButton.click();
     });
   }

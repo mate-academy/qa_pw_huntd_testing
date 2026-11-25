@@ -4,9 +4,9 @@ import { CandidatesPage } from '../../../src/ui/pages/candidates/CandidatesPage'
 import { ChatsPage } from '../../../src/ui/pages/chats/ChatsPage';
 
 export const test = base.extend<{
-  jobsPage;
-  candidatesPage;
-  chatsPage;
+  jobsPage: any;
+  candidatesPage: any;
+  chatsPage: any;
 }>({
   jobsPage: async ({ page }, use) => {
     const jobsPage = new JobsPage(page);

@@ -4,7 +4,7 @@ import { UserSettingsFactory } from '../../src/factoryItems/UserSettingsFactory'
 import { UserApiRegisterFactory } from '../../src/factoryItems/UserApiRegisterFactory';
 
 export const test = base.extend<{
-  factories;
+  factories: any;
 }>({
   factories: async ({}, use) => {
     const factories = {

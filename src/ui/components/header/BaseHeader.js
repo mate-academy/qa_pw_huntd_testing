@@ -16,8 +16,8 @@ export class BaseHeader extends BaseComponent {
     this.#homeLink = this.page.getByRole('link', { name: 'Home' });
   }
 
-  async clickConduitLogo() {
-    await this.step(`Click 'Conduit' logo in the page header`, async () => {
+  async clickHundtLogo() {
+    await this.step(`Click 'Hundt' logo in the page header`, async () => {
       await this.#huntdLogo.click();
     });
   }
